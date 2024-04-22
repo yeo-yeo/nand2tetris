@@ -32,5 +32,53 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-	//// Replace this comment with your code.
+    // Mux to set the A register: either from an A instruction (@something) or by assignment
+    // from the ALU (which would be because the appropriate dest bit is set in a C instruction)
+	Mux16(a=instruction,b=aluOut,sel=instruction[15],out=instructionMuxOut);
+    // A register should be written if it's an A instruction (0 in instr[15]) OR if the appropriate
+    // dest bit was set in a C instruction (instr[5])
+    Not(in=instruction[15],out=isAInstruction);
+    Or(a=isAInstruction,b=instruction[5],out=shouldLoadARegister);
+    ARegister(in=instructionMuxOut,load=shouldLoadARegister,out=aRegOut,out[0..14]=addressM);
+    // Logic to determine jump situation for the PC:
+    // jump if less than bit AND alu negative output
+    And(a=instruction[2],b=aluNegOutput,out=doJump1Output);
+    // jump if equals 0 bit AND alu zero output
+    And(a=instruction[1],b=aluZeroOutput,out=doJump2Output);
+    // jump on positive ALU output setup:
+    Not(in=aluNegOutput,out=aluOutputNotNegative);
+    Not(in=aluZeroOutput,out=aluOutputNotZero);
+    And(a=aluOutputNotNegative,b=aluOutputNotZero,out=positiveAluOutput);
+    // jump if greater than bit AND neither negative nor zero
+    And(a=positiveAluOutput,b=instruction[0],out=doJump3Output);
+    // I have 3 signals which allow a jump - need to condense them to one value for PC:
+    Or(a=doJump1Output,b=doJump2Output,out=doJumpOr1);
+    Or(a=doJump3Output,b=false,out=doJumpOr2);
+    Or(a=doJumpOr1,b=doJumpOr2,out=doJumpOrsOutput);
+    And(a=doJumpOrsOutput,b=instruction[15],out=doJumpOutput);
+    Not(in=doJumpOutput,out=doNotJumpOutput);
+    // Program Counter - which instruction to execute next (overridable by jumps or resets)
+    // What's the significance of PC being able to output 16 bits but CPU pc out only wanting 15?
+    PC(in=aRegOut,inc=doNotJumpOutput,load=doJumpOutput,reset=reset,out[0..14]=pc);
+    // Mux that determines whether the A or M is passed to ALU (never both) - i.e.
+    // the first comp bit
+    Mux16(a=aRegOut,b=inM,sel=instruction[12],out=addressMuxOut);
+    // The brains of the operation
+    // I don't personally see how the control in bits map to the inst comp bits but I'm 
+    // going to try it and then maybe dig into it more after that
+    ALU(x=dRegOut,y=addressMuxOut,zx=instruction[11],nx=instruction[10],zy=instruction[9],ny=instruction[8],f=instruction[7],no=instruction[6],out=aluOut,out=outM,zr=aluZeroOutput,ng=aluNegOutput);
+    // The sort of working memory register - set and used by the ALU
+    And(a=instruction[4],b=instruction[15],out=shouldLoadDRegister);
+    DRegister(in=aluOut,load=shouldLoadDRegister,out=dRegOut);
+    // Do write to memory if it's a C instruction and if the dest includes M
+    // (determined by final dest bit which is instruction[3])
+    And(a=instruction[15],b=instruction[3],out=writeM);
 }
+
+
+// Todo - revisit the ALU table and think through why this configuration
+// of pins succeeds in achieving the right operations (it doesn't feel intuitive
+// to me)
+
+// Feel like I didn't do a great job at this one - kept chucking in extra logic gates
+// in a haphazard way when I'm sure it could be done much more efficiently

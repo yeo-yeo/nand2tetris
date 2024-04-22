@@ -24,6 +24,23 @@ CHIP Memory {
     IN in[16], load, address[15];
     OUT out[16];
 
+    // screen address starts at 0100000000000000
+    // keyboard address is 0110000000000000
+    // so you can use 2nd bit from left (add[14]) to determine if the address is main
+    // memory or devices
+    // and then if you know it's devices, the 3rd bit from the left (add[13]) to 
+    // determine if it's screen or keyboard
+
     PARTS:
-	//// Replace this comment with your code.
+    // Glue
+    DMux(in=load, sel=address[14], a=mainLoad, b=screenLoad);
+    // Main data memory (16K)
+    RAM16K(in=in,load=mainLoad,address=address[0..13],out=mainMemoryOut);
+    // Screen memory (8K) - built in chip
+    Screen(in=in,load=screenLoad, address=address[0..12], out=screenOut);
+    // Keyboard memory (16 bit) - built in chip
+    Keyboard(out=keyOut);
+    // Glue
+    Mux4Way16(a=mainMemoryOut,b=mainMemoryOut,c=screenOut,d=keyOut,sel=address[13..14],out=out);
+    // NB i was thinking about how to identify keyboard in vs screen in but you dont need a keyboard in!! 
 }
