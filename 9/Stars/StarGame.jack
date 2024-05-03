@@ -1,0 +1,26 @@
+/**
+ * Documentation
+ */
+class StarGame {
+    // declare some fields?
+    field int turn;
+
+    /** Constructs a new star game */
+    constructor StarGame new() {
+     // do some setup
+     let turn = 0;
+     return this;
+    }
+
+    /** Disposes this game */
+    method void dispose() {
+     // todo: dispose of created classes
+     do Memory.deAlloc(this);
+     return;
+    }
+
+    method void run() {
+     do Output.printString("Running game...");
+     return;
+    }
+}

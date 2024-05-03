@@ -1,0 +1,11 @@
+class Main {
+    function void main() {
+        var StarGame game;
+        do Output.printString("Starting up...");
+        do Output.println();
+        let game = StarGame.new();
+        do game.run();
+        do game.dispose();
+        return;
+    }
+}
