@@ -1,18 +1,29 @@
 #!/usr/bin/env python3
-
+import os
 import sys
 from command_parser import Parser, command_type
 from codewriter import Codewriter
 
 def main():
     if len(sys.argv) < 2:
-        print('Please provide a .vm input file')
+        print('Please provide a .vm input file or directory')
         sys.exit(1)
     
-    filename = sys.argv[1]
+    input_name = sys.argv[1]
 
-    parser = Parser(filename)
-    codewriter = Codewriter(filename.split('.vm')[0])
+    files = []
+
+    if os.path.isfile(input_name):
+        files.append(input_name.split('.vm')[0])
+    else:
+        dir_files = os.listdir(input_name)
+        for file in dir_files:
+            if file[-3:] == '.vm':
+                files.append(file.split('.vm')[0])
+
+
+    parser = Parser(input_name)
+    codewriter = Codewriter(input_name.split('.vm')[0])
 
     while parser.has_more_lines():
         parser.advance()
