@@ -1,0 +1,64 @@
+/**
+ * Documentation
+ */
+class Constellation {
+    field String name;
+
+    /** Constructs a new star game */
+    constructor Constellation new(int no) {
+     let name = "ORION";
+     // based on no, construct constellation...
+     // i.e. bitmap of pics
+     return this;
+    }
+
+    /** Disposes this constellation */
+    method void dispose() {
+     do Memory.deAlloc(this);
+     return;
+    }
+
+    method void paint() {
+        // Display the stars
+        // set to black
+        do Screen.setColor(true);
+        do Screen.drawRectangle(0, 0, 511, 225);
+        do Screen.setColor(false);
+        do Screen.drawPixel(100,100);
+        do Screen.drawPixel(101,101);
+        do Screen.drawPixel(101,100);
+        do Screen.drawPixel(100,101);
+
+        do Screen.drawPixel(200,200);
+        do Screen.drawPixel(201,201);
+        do Screen.drawPixel(201,200);
+        do Screen.drawPixel(200,201);
+
+        do Screen.drawPixel(300,100);
+        do Screen.drawPixel(301,101);
+        do Screen.drawPixel(301,100);
+        do Screen.drawPixel(300,101);
+
+        return;
+    }
+
+    method boolean checkName(String input) {
+        var int i;
+        var boolean isEqual;
+
+        if (~(name.length() = input.length())) {
+            return false;
+        }
+
+        let i = 0;
+
+        while (i < name.length()) {
+            if (~(input.charAt(i)=name.charAt(i))) {
+                return false;
+            } else {
+                let i = i + 1;
+            }
+        }
+        return true;
+    }
+}

@@ -2,12 +2,13 @@
  * Documentation
  */
 class StarGame {
-    // declare some fields?
+    field Constellation constellation;
     field int turn;
 
     /** Constructs a new star game */
     constructor StarGame new() {
-     // do some setup
+     // todo: randomness?
+     let constellation = Constellation.new(0);
      let turn = 0;
      return this;
     }
@@ -20,7 +21,44 @@ class StarGame {
     }
 
     method void run() {
+     var char key; // currently pressed key 
+     var boolean exit;
+     var String guess;
+     var boolean isCorrect;
+     let exit = false;
+
      do Output.printString("Running game...");
+     do Output.println();
+     do Sys.wait(2);
+     do constellation.paint();
+    //  do constellation.getResponse();
+     
+     let guess = Keyboard.readLine("What is it? ");
+     let isCorrect = constellation.checkName(guess);
+
+    //  // does it freak out if you try and printStr a boolean?? YES!
+    //  do Output.printInt(isCorrect);
+
+     if (isCorrect) { 
+        do Output.printString("Correct!");
+    } else {
+        do Output.printString("Incorrect!");
+    }
+
+     while (~exit) {
+        // Loop to listen for key presses
+        while (key = 0) {
+            let key = Keyboard.keyPressed();
+        }
+        if (key = 81) { let exit = true;} // q to quit
+
+        // waiting for key to be released
+        // ..? is this needed
+        while (~(key = 0)) {
+            let key = Keyboard.keyPressed();
+        }
+     }
+
      return;
     }
 }
