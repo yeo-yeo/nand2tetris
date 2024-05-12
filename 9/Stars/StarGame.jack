@@ -2,15 +2,67 @@
  * Documentation
  */
 class StarGame {
-    field Constellation constellation;
+    field Constellation currentConstellation;
     field int turn;
+    field int correctGuesses;
+    field int randomSeed;
+    field Array constellations;
 
     /** Constructs a new star game */
     constructor StarGame new() {
-     // todo: randomness?
-     let constellation = Constellation.new(0);
      let turn = 0;
+     let correctGuesses = 0;
+
      return this;
+    }
+
+    method Array generateConstellationsOrder() {
+        var int i;
+        var int j;
+        var int r;
+        var boolean alreadyAdded;
+        var Array constellationsArray;
+
+        let constellationsArray = Array.new(3);
+
+        let i = 0;
+        // Hack: initialise values to unusable number so population
+        // below works properly (otherwise it's not adding 0)
+        while (i < 3) {
+            let constellationsArray[i] = 9;
+            let i = i + 1;
+        }
+
+        let alreadyAdded = false;
+
+        let randomSeed = randomSeed + 1;
+        do Random.setSeed(randomSeed);
+
+        let i = 0;
+
+        // populate the 3 slots with numbers 0, 1, 2 in a random order
+        while (i < 3) {
+            // get a random no in range 0-2
+            let r = Random.randRange(2);
+
+            // check the existing array and only add if it's not already there, otherwise go again
+            let j = 0;
+            while ((j < 3) & (~alreadyAdded)) {
+                if (constellationsArray[j] = r) {
+                    let alreadyAdded = true;
+                }
+                let j = j + 1;
+            }
+
+            if (~alreadyAdded) {
+                let constellationsArray[i] = r;
+                let i = i + 1;
+            }
+
+            let alreadyAdded = false;            
+        }
+
+        return constellationsArray;
     }
 
     /** Disposes this game */
@@ -20,45 +72,148 @@ class StarGame {
      return;
     }
 
-    method void run() {
-     var char key; // currently pressed key 
-     var boolean exit;
-     var String guess;
-     var boolean isCorrect;
-     let exit = false;
+    method void introScreen() {
+        var boolean textColour;
+        var int i;
 
-     do Output.printString("Running game...");
-     do Output.println();
-     do Sys.wait(2);
-     do constellation.paint();
-    //  do constellation.getResponse();
-     
-     let guess = Keyboard.readLine("What is it? ");
-     let isCorrect = constellation.checkName(guess);
+        let textColour = false; // white to start
+        let i = 6;
 
-    //  // does it freak out if you try and printStr a boolean?? YES!
-    //  do Output.printInt(isCorrect);
+         while (i > 0) {
+            // Change background
+            do Screen.setColor(~textColour);
+            do Screen.drawRectangle(0, 0, 511, 255);
 
-     if (isCorrect) { 
-        do Output.printString("Correct!");
-    } else {
-        do Output.printString("Incorrect!");
+            // Change text
+            do Screen.setColor(textColour);
+            do printTitle();
+            do Sys.wait(1000);
+            let textColour = ~textColour;
+            let i = i - 1;
+         }
+
+         do Screen.drawRectangle(0, 0, 511, 255);
+         do Output.moveCursor(12,20);
+         do Output.printString(" Press any key to begin ");
+        
+        // Generate 'random' seed to use for choosing first constellation
+         while (Keyboard.keyPressed() = 0) {
+            let randomSeed = randomSeed + 1;
+        }   
+
+        return;
     }
 
-     while (~exit) {
-        // Loop to listen for key presses
-        while (key = 0) {
-            let key = Keyboard.keyPressed();
-        }
-        if (key = 81) { let exit = true;} // q to quit
+    method void printTitle() {
 
-        // waiting for key to be released
-        // ..? is this needed
-        while (~(key = 0)) {
-            let key = Keyboard.keyPressed();
-        }
-     }
+        // Draw S
+        do Screen.drawRectangle(79, 63, 140, 75);
+        do Screen.drawRectangle(79, 75, 91, 121);
+        do Screen.drawRectangle(79, 121, 140, 133);
+        do Screen.drawRectangle(128, 133, 140, 179);
+        do Screen.drawRectangle(79, 179, 140, 191);
 
-     return;
+        // Draw T
+        do Screen.drawRectangle(150, 63, 213, 75);
+        do Screen.drawRectangle(178, 75, 190, 191);
+
+        // Draw A
+        do Screen.drawRectangle(229, 63, 279, 75);
+        do Screen.drawRectangle(223, 75, 235, 191);
+        do Screen.drawRectangle(235, 121, 273, 133);
+        do Screen.drawRectangle(273, 75, 285, 191);
+
+        // Draw R
+        do Screen.drawRectangle(296, 63, 308, 191);
+        do Screen.drawRectangle(308, 63, 340, 75);
+        do Screen.drawRectangle(308, 111, 352, 123); 
+        do Screen.drawRectangle(340, 63, 352, 111);
+        do Screen.drawRectangle(346, 123, 358, 191);
+
+        // Draw S
+        do Screen.drawRectangle(369, 63, 430, 75);
+        do Screen.drawRectangle(369, 75, 381, 121);
+        do Screen.drawRectangle(369, 121, 430, 133);
+        do Screen.drawRectangle(418, 133, 430, 179);
+        do Screen.drawRectangle(369, 179, 430, 191);
+
+        return;
+    }
+
+    method void printEnd() {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(0, 0, 511, 255);
+        do Output.moveCursor(10, 27);
+        do Output.printString(" Finished! ");
+        do Output.moveCursor(12,21);
+        do Output.printString(" You scored ");
+        do Output.printInt(correctGuesses);
+        do Output.printString(" out of 3 ");
+        do Output.moveCursor(14,15);
+        do Output.printString(" Press n to play again or q to quit ");
+
+        return;
+    }
+
+    method void run() {
+     var char key; // currently pressed key 
+     var String guess;
+     var boolean isCorrect;
+
+    // Intro screen
+    do introScreen();
+
+    // This needs to happen after intro screen because that step generates the random 
+    // seed used in generateConstellationsOrder
+    let constellations = generateConstellationsOrder();
+    let currentConstellation = Constellation.new(constellations[turn]);
+
+    do Sys.wait(100);
+
+    // this needs to loop
+    while (turn < 4) {
+        do currentConstellation.paint();
+
+        do Output.moveCursor(0,0);
+        let guess = Keyboard.readLine("Which constellation is it? ");
+        let isCorrect = currentConstellation.checkName(guess);
+
+        if (isCorrect) { 
+            do Output.printString("Correct!");
+            let correctGuesses = correctGuesses + 1;
+        } else {
+            do Output.printString("Incorrect!");
+        }
+
+        do Sys.wait(2000);
+
+        if (turn < 2) {
+            let turn = turn + 1;
+            let currentConstellation = Constellation.new(constellations[turn]);
+        } else {
+            do printEnd();
+
+            while (key = 0) {
+                let key = Keyboard.keyPressed();
+            }
+
+            // listen for n to play again or q to quit
+            if (key = 78) { // n
+                // Reset game state
+                let turn = 0;
+                let correctGuesses = 0;
+                let constellations = generateConstellationsOrder();
+                do currentConstellation.dispose();
+                let currentConstellation = Constellation.new(constellations[turn]);
+                let key = 0;
+            }
+            if (key = 81) { // q
+                // End
+                return;
+            }
+
+        }
+        }
+        return;
     }
 }

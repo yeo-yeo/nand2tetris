@@ -1,7 +1,15 @@
 function Constellation.new 0
-push constant 1
+push constant 2
 call Memory.alloc 1
 pop pointer 0
+push argument 0
+pop this 0
+push argument 0
+push constant 0
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
 push constant 5
 call String.new 1
 push constant 79
@@ -14,7 +22,54 @@ push constant 79
 call String.appendChar 2
 push constant 78
 call String.appendChar 2
-pop this 0
+pop this 1
+label IF_FALSE0
+push argument 0
+push constant 1
+eq
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push constant 9
+call String.new 1
+push constant 83
+call String.appendChar 2
+push constant 79
+call String.appendChar 2
+push constant 77
+call String.appendChar 2
+push constant 69
+call String.appendChar 2
+push constant 84
+call String.appendChar 2
+push constant 72
+call String.appendChar 2
+push constant 73
+call String.appendChar 2
+push constant 78
+call String.appendChar 2
+push constant 71
+call String.appendChar 2
+pop this 1
+label IF_FALSE1
+push argument 0
+push constant 2
+eq
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push constant 4
+call String.new 1
+push constant 69
+call String.appendChar 2
+push constant 76
+call String.appendChar 2
+push constant 83
+call String.appendChar 2
+push constant 69
+call String.appendChar 2
+pop this 1
+label IF_FALSE2
 push pointer 0
 return
 function Constellation.dispose 0
@@ -28,6 +83,41 @@ return
 function Constellation.paint 0
 push argument 0
 pop pointer 0
+push this 0
+push constant 0
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push pointer 0
+call Constellation.paintOrion 1
+pop temp 0
+label IF_FALSE0
+push this 0
+push constant 1
+eq
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push pointer 0
+call Constellation.paintOrion 1
+pop temp 0
+label IF_FALSE1
+push this 0
+push constant 2
+eq
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push pointer 0
+call Constellation.paintOrion 1
+pop temp 0
+label IF_FALSE2
+push constant 0
+return
+function Constellation.paintOrion 0
+push argument 0
+pop pointer 0
 push constant 0
 not
 call Screen.setColor 1
@@ -35,7 +125,7 @@ pop temp 0
 push constant 0
 push constant 0
 push constant 511
-push constant 225
+push constant 255
 call Screen.drawRectangle 4
 pop temp 0
 push constant 0
@@ -94,7 +184,7 @@ return
 function Constellation.checkName 2
 push argument 0
 pop pointer 0
-push this 0
+push this 1
 call String.length 1
 push argument 1
 call String.length 1
@@ -110,7 +200,7 @@ push constant 0
 pop local 0
 label WHILE_EXP0
 push local 0
-push this 0
+push this 1
 call String.length 1
 lt
 not
@@ -118,7 +208,7 @@ if-goto WHILE_END0
 push argument 1
 push local 0
 call String.charAt 2
-push this 0
+push this 1
 push local 0
 call String.charAt 2
 eq

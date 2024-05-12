@@ -2,13 +2,21 @@
  * Documentation
  */
 class Constellation {
+    field int key;
     field String name;
 
     /** Constructs a new star game */
     constructor Constellation new(int no) {
-     let name = "ORION";
-     // based on no, construct constellation...
-     // i.e. bitmap of pics
+        let key = no;
+        if (no = 0) {
+            let name = "ORION";
+        }
+        if (no = 1) {
+            let name = "SOMETHING";
+        }
+        if (no = 2) {
+            let name = "ELSE";
+        }
      return this;
     }
 
@@ -19,10 +27,24 @@ class Constellation {
     }
 
     method void paint() {
+        if (key = 0) {
+            do paintOrion();
+        }
+        if (key = 1) {
+            do paintOrion();
+        }
+        if (key = 2) {
+            do paintOrion();
+        }
+
+        return;
+    }
+
+    method void paintOrion() {
         // Display the stars
         // set to black
         do Screen.setColor(true);
-        do Screen.drawRectangle(0, 0, 511, 225);
+        do Screen.drawRectangle(0, 0, 511, 255);
         do Screen.setColor(false);
         do Screen.drawPixel(100,100);
         do Screen.drawPixel(101,101);
