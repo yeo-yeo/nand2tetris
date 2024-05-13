@@ -1,5 +1,8 @@
-// Borrowed from Mark Armbrust
-// http://nand2tetris-questions-and-answers-forum.52.s1.nabble.com/Random-number-generator-for-hack-cpu-td4025503.html
+/**
+* Class to generate random numbers so that the questions are not always in the same order
+* Originally written by Mark Armbrust
+* http://nand2tetris-questions-and-answers-forum.52.s1.nabble.com/Random-number-generator-for-hack-cpu-td4025503.html
+*/
 
 class Random {
     static int seed;

@@ -1,5 +1,6 @@
 /**
- * Documentation
+ * A constellation: holds the name and draws the picture of a constellation specfied by
+ * the number passed.  Currently supports 0 (Orion), 1 (Sagittarius) and 2 (Cassiopeia).
  */
 class Constellation {
     field int key;
@@ -12,10 +13,10 @@ class Constellation {
             let name = "ORION";
         }
         if (no = 1) {
-            let name = "SOMETHING";
+            let name = "SAGITTARIUS";
         }
         if (no = 2) {
-            let name = "ELSE";
+            let name = "CASSIOPEIA";
         }
      return this;
     }
@@ -31,10 +32,10 @@ class Constellation {
             do paintOrion();
         }
         if (key = 1) {
-            do paintOrion();
+            do paintSagittarius();
         }
         if (key = 2) {
-            do paintOrion();
+            do paintCassiopeia();
         }
 
         return;
@@ -46,23 +47,86 @@ class Constellation {
         do Screen.setColor(true);
         do Screen.drawRectangle(0, 0, 511, 255);
         do Screen.setColor(false);
-        do Screen.drawPixel(100,100);
-        do Screen.drawPixel(101,101);
-        do Screen.drawPixel(101,100);
-        do Screen.drawPixel(100,101);
 
-        do Screen.drawPixel(200,200);
-        do Screen.drawPixel(201,201);
-        do Screen.drawPixel(201,200);
-        do Screen.drawPixel(200,201);
-
-        do Screen.drawPixel(300,100);
-        do Screen.drawPixel(301,101);
-        do Screen.drawPixel(301,100);
-        do Screen.drawPixel(300,101);
+        // Bottom edge
+        do Screen.drawRectangle(223, 241, 226, 243);
+        do Screen.drawRectangle(283, 227, 286, 230);
+        // Belt
+        do Screen.drawRectangle(235, 180, 237, 182);
+        do Screen.drawRectangle(245, 175, 247, 177);
+        do Screen.drawRectangle(252, 168, 254, 170);
+        // Shoulders and head
+        do Screen.drawRectangle(208, 110, 211, 113);
+        do Screen.drawRectangle(246, 92, 248, 94);
+        do Screen.drawRectangle(264, 118, 267, 121);
+        // Left arm
+        do Screen.drawRectangle(196, 95, 197, 96);
+        do Screen.drawRectangle(180, 61, 181, 62);
+        do Screen.drawRectangle(188, 58, 189, 59);
+        do Screen.drawRectangle(195, 21, 196, 22);
+        do Screen.drawRectangle(212, 16, 213, 17);
+        // Right arm
+        do Screen.drawRectangle(320, 90, 321, 91);
+        do Screen.drawRectangle(330, 100, 331, 101);
+        do Screen.drawRectangle(331, 113, 332, 115);
+        do Screen.drawRectangle(327, 123, 328, 124);
+        do Screen.drawRectangle(325, 147, 326, 148);
+        do Screen.drawRectangle(317, 154, 318, 155);
 
         return;
     }
+
+     method void paintSagittarius() {
+        // Display the stars
+        // set to black
+        do Screen.setColor(true);
+        do Screen.drawRectangle(0, 0, 511, 255);
+        do Screen.setColor(false);
+
+        // Left part starting from bottom
+        do Screen.drawRectangle(215, 244, 217, 246);
+        do Screen.drawRectangle(212, 212, 214, 214);
+        do Screen.drawRectangle(167, 227, 170, 230);
+        do Screen.drawRectangle(153, 178, 155, 180);
+        do Screen.drawRectangle(138, 121, 140, 123);
+        do Screen.drawRectangle(182, 93, 184, 95);
+        // Body from left
+        do Screen.drawRectangle(232, 112, 234, 114);
+        do Screen.drawRectangle(240, 128, 242, 130);
+        do Screen.drawRectangle(252, 101, 255, 104);
+        do Screen.drawRectangle(270, 108, 272, 110);
+        do Screen.drawRectangle(300, 96, 302, 98);
+        do Screen.drawRectangle(326, 63, 329, 66); // Polis
+        do Screen.drawRectangle(309, 130, 311, 132);
+        do Screen.drawRectangle(334, 136, 336, 138);
+        do Screen.drawRectangle(368, 122, 370, 124);
+        do Screen.drawRectangle(302, 164, 305, 167);
+        do Screen.drawRectangle(312, 184, 314, 186);
+        // Top left prong
+        do Screen.drawRectangle(202, 38, 204, 40);
+        do Screen.drawRectangle(211, 48, 213, 50);
+        do Screen.drawRectangle(234, 67, 236, 69);
+        do Screen.drawRectangle(247, 62, 249, 64);
+
+        return;
+     }
+
+      method void paintCassiopeia() {
+        // Display the stars
+        // set to black
+        do Screen.setColor(true);
+        do Screen.drawRectangle(0, 0, 511, 255);
+        do Screen.setColor(false);
+
+        // From top left
+        do Screen.drawRectangle(64, 57, 68, 60);
+        do Screen.drawRectangle(161, 156, 164, 159);
+        do Screen.drawRectangle(263, 130, 266, 134);
+        do Screen.drawRectangle(346, 235, 348, 238);
+        do Screen.drawRectangle(440, 129, 443, 133);
+
+        return;
+      } 
 
     method boolean checkName(String input) {
         var int i;

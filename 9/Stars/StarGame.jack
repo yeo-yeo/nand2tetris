@@ -1,5 +1,6 @@
 /**
- * Documentation
+ * This class does most of the work.  It prints the intro screen, figures out a random order for the 3 questions,
+ * guides the user through them, and allows the user to play again or quit when finished.
  */
 class StarGame {
     field Constellation currentConstellation;
@@ -16,54 +17,7 @@ class StarGame {
      return this;
     }
 
-    method Array generateConstellationsOrder() {
-        var int i;
-        var int j;
-        var int r;
-        var boolean alreadyAdded;
-        var Array constellationsArray;
-
-        let constellationsArray = Array.new(3);
-
-        let i = 0;
-        // Hack: initialise values to unusable number so population
-        // below works properly (otherwise it's not adding 0)
-        while (i < 3) {
-            let constellationsArray[i] = 9;
-            let i = i + 1;
-        }
-
-        let alreadyAdded = false;
-
-        let randomSeed = randomSeed + 1;
-        do Random.setSeed(randomSeed);
-
-        let i = 0;
-
-        // populate the 3 slots with numbers 0, 1, 2 in a random order
-        while (i < 3) {
-            // get a random no in range 0-2
-            let r = Random.randRange(2);
-
-            // check the existing array and only add if it's not already there, otherwise go again
-            let j = 0;
-            while ((j < 3) & (~alreadyAdded)) {
-                if (constellationsArray[j] = r) {
-                    let alreadyAdded = true;
-                }
-                let j = j + 1;
-            }
-
-            if (~alreadyAdded) {
-                let constellationsArray[i] = r;
-                let i = i + 1;
-            }
-
-            let alreadyAdded = false;            
-        }
-
-        return constellationsArray;
-    }
+    
 
     /** Disposes this game */
     method void dispose() {
@@ -155,6 +109,55 @@ class StarGame {
         return;
     }
 
+    method Array generateConstellationsOrder() {
+        var int i;
+        var int j;
+        var int r;
+        var boolean alreadyAdded;
+        var Array constellationsArray;
+
+        let constellationsArray = Array.new(3);
+
+        let i = 0;
+        // Hack: initialise values to unusable number so population
+        // below works properly (otherwise it's not adding 0)
+        while (i < 3) {
+            let constellationsArray[i] = 9;
+            let i = i + 1;
+        }
+
+        let alreadyAdded = false;
+
+        let randomSeed = randomSeed + 1;
+        do Random.setSeed(randomSeed);
+
+        let i = 0;
+
+        // populate the 3 slots with numbers 0, 1, 2 in a random order
+        while (i < 3) {
+            // get a random no in range 0-2
+            let r = Random.randRange(2);
+
+            // check the existing array and only add if it's not already there, otherwise go again
+            let j = 0;
+            while ((j < 3) & (~alreadyAdded)) {
+                if (constellationsArray[j] = r) {
+                    let alreadyAdded = true;
+                }
+                let j = j + 1;
+            }
+
+            if (~alreadyAdded) {
+                let constellationsArray[i] = r;
+                let i = i + 1;
+            }
+
+            let alreadyAdded = false;            
+        }
+
+        return constellationsArray;
+    }
+
     method void run() {
      var char key; // currently pressed key 
      var String guess;
@@ -168,9 +171,7 @@ class StarGame {
     let constellations = generateConstellationsOrder();
     let currentConstellation = Constellation.new(constellations[turn]);
 
-    do Sys.wait(100);
-
-    // this needs to loop
+    // Currently there are 3 options so 3 turns
     while (turn < 4) {
         do currentConstellation.paint();
 
@@ -205,7 +206,10 @@ class StarGame {
                 let constellations = generateConstellationsOrder();
                 do currentConstellation.dispose();
                 let currentConstellation = Constellation.new(constellations[turn]);
-                let key = 0;
+                while (Keyboard.keyPressed() = 78) {
+                    // make sure they release key before continuing
+                    // so it doesn't insert N as the start of the next answer
+                }
             }
             if (key = 81) { // q
                 // End
